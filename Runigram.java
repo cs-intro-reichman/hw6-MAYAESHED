@@ -19,9 +19,12 @@ public class Runigram {
 		//image = flippedHorizontally(tinypic);
 		//image = flippedVertically(tinypic);
 		//image = grayScaled(tinypic);
-		image = scaled(tinypic, 3, 5);
-		System.out.println();
-		print(image);
+		Color c1 = new Color (100, 40, 100);
+		Color c2 = new Color (200, 20, 40);
+		System.out.println(blend(c1, c2, 0.25));
+		//image = scaled(tinypic, 3, 5);
+		//System.out.println();
+		//print(image);
 		
 		//// Write here whatever code you need in order to test your work.
 		//// You can continue using the image array.
@@ -139,7 +142,6 @@ public class Runigram {
 		}
 		return scaled;
 	}
-	
 	/**
 	 * Computes and returns a blended color which is a linear combination of the two given
 	 * colors. Each r, g, b, value v in the returned color is calculated using the formula 
@@ -147,10 +149,11 @@ public class Runigram {
 	 * values in the two input color.
 	 */
 	public static Color blend(Color c1, Color c2, double alpha) {
-		//// Replace the following statement with your code
-		return null;
+		int newRed = (int) (alpha * c1.getRed() + (1- alpha) * c2.getRed());
+		int newGreen = (int) (alpha * c1.getGreen() + (1-alpha) * c2.getGreen());
+		int newBlue = (int) (alpha * c1.getBlue() + (1- alpha) * c2.getBlue());
+		return new Color (newRed, newGreen, newBlue);
 	}
-	
 	/**
 	 * Cosntructs and returns an image which is the blending of the two given images.
 	 * The blended image is the linear combination of (alpha) part of the first image
@@ -158,10 +161,14 @@ public class Runigram {
 	 * The two images must have the same dimensions.
 	 */
 	public static Color[][] blend(Color[][] image1, Color[][] image2, double alpha) {
-		//// Replace the following statement with your code
-		return null;
+		Color[][] blend = new Color[image1.length][image1[0].length];
+		for (int i = 0; i < blend.length; i++) {
+			for (int j = 0; j < blend[0].length; j++) {
+				blend[i][j] = blend(image1[i][j], image2[i][j], alpha);		
+			}		
+		}
+		return blend;
 	}
-
 	/**
 	 * Morphs the source image into the target image, gradually, in n steps.
 	 * Animates the morphing process by displaying the morphed image in each step.
@@ -169,9 +176,18 @@ public class Runigram {
 	 * of the source image.
 	 */
 	public static void morph(Color[][] source, Color[][] target, int n) {
-		//// Replace this comment with your code
-	}
-	
+		if (source.length != target.length || source[0].length != target[0].length) {
+			target = scaled(target, source[0].length, source.length);
+		}
+		double doubleN = (double) n;
+		for (int i = 0; i <= n; i++) {
+			double alpha = (doubleN - i) / doubleN;
+			Color[][] morphImage = blend(source, target, alpha);
+			display(morphImage);
+			StdDraw.pause(500);
+				
+		}		
+	}	
 	/** Creates a canvas for the given image. */
 	public static void setCanvas(Color[][] image) {
 		StdDraw.setTitle("Runigram 2023");
